@@ -5,19 +5,20 @@ import words from "./words";
 
 function App() {
   //find index returns the first match according to condition
-  const [solution, setSolution] = useState(
-    words[Math.floor(Math.random() * words.length)].toLowerCase()
-  );
+  const [solution, setSolution] = useState("");
   const [guesses, setGuesses] = useState(Array(6).fill(null));
   const [currentGuess, setCurrentGuess] = useState("");
   const [gameOver, setGameOver] = useState(false);
+  useEffect(() => {
+    setSolution(words[Math.floor(Math.random() * words.length)].toLowerCase());
+  }, []);
 
   useEffect(() => {
-    console.log(solution);
     const typeLetter = (e) => {
       if (gameOver) {
         return;
       }
+      const lastOne = guesses.includes(null);
       if (e.key === "Enter") {
         const newGuesses = [...guesses];
         const currentIndex = guesses.findIndex((word) => word === null); // to get current index so we can only update it
@@ -25,6 +26,9 @@ function App() {
         setGuesses(newGuesses);
         setCurrentGuess("");
         setGameOver(currentGuess === solution);
+        if (!lastOne) {
+          alert(solution);
+        }
         return;
       }
       if (e.key === "Backspace") {
@@ -42,7 +46,7 @@ function App() {
     return () => {
       window.removeEventListener("keydown", typeLetter);
     };
-  }, [currentGuess, guesses]);
+  }, [currentGuess, guesses, gameOver, solution]);
 
   return (
     <div className="App">
